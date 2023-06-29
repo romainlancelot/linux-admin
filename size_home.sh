@@ -17,13 +17,7 @@ function get_home_directories() {
     done
 }
 
-# Ce script classera les utilisateurs du plus au moins gourmand en espace disque grâce à
-# l'algorithme "tri cocktail" que vous implémenterez.
-# afficger sour la forme 
-# user1:2.5G,user2:1.2G,user3:0.5G,user4:0.1G
-
 function get_home_directories_size() {
-    # user1:2.5G,user2:1.2G,user3:0.5G,user4:0.1G
     home_directories_size=""
     for home_directory in $home_directories
     do
@@ -31,6 +25,7 @@ function get_home_directories_size() {
     done
     home_directories_size=$(echo $home_directories_size | cut -c2-)
 }
+
 
 # require sudo rights to run this script
 if [ $(id -u) -ne 0 ]
@@ -44,3 +39,11 @@ get_human_users
 get_home_directories
 get_home_directories_size
 echo $home_directories_size
+
+
+for user in $users
+do
+    echo -n "$user: "
+    echo $home_directories_size | tr "," "\n" | grep "$user:" | cut -d: -f2
+
+done
