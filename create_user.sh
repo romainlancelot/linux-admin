@@ -44,7 +44,7 @@ function assign_groups() {
     # assign groups and the first one is the primary group and create if not exists
     if [ -z $1 ]
     then
-        echo -e "$RED[ERROR]$NC No group specified: default group is $login"
+        echo -e "$ORANGE[WARNING]$NC No group specified: default group is $login"
     else
         for group in $(echo $1 | tr "," "\n")
         do
