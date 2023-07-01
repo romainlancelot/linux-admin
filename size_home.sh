@@ -44,13 +44,9 @@ do
     then
         sed -i '/### USERS HOME DIRECTORIES SIZE ###/,/### END USERS HOME DIRECTORIES SIZE ###/d' $bashrc
     fi
-    
+
     echo "### USERS HOME DIRECTORIES SIZE ###" >> $bashrc
     echo "echo $home_directories_size | tr \",\" \"\n\" | sort -n -r | sed 's/\/home\///g' | head -n 5" >> $bashrc
-    
-    # modifierez le fichier .bashrc de chaque utilisateur pour qu'il voit s'afficher la taille de
-    # son répertoire personnel ainsi qu'un avertissement s'il occupe plus de 100Mo.
-    # Les tailles devront s'afficher sous la forme "XGo,YMo,Zko et Toctets".
 
     home_directory_size=$(du -sh $home_directory | cut -f1)
     echo -e "$GREEN[OK]$NC The home directory of $home_directory is $home_directory_size"
