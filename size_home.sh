@@ -18,12 +18,7 @@ function get_home_directories() {
 }
 
 function get_home_directories_size() {
-    home_directories_size=""
-    for home_directory in $home_directories
-    do
-        home_directories_size="$home_directories_size,$home_directory:$(du -sh $home_directory | cut -f1)"
-    done
-    home_directories_size=$(echo $home_directories_size | cut -c2-)
+    home_directories_size=$(du -sh $home_directories | sort -n | tr "\n" "," | sed 's/,$//')
 }
 
 
@@ -38,12 +33,36 @@ fi
 get_human_users
 get_home_directories
 get_home_directories_size
-echo $home_directories_size
 
+echo -e "$GREEN[OK]$NC The 5 biggest home directories are:"
+echo $home_directories_size | tr "," "\n" | sort -n -r | sed 's/\/home\///g' | head -n 5
 
-for user in $users
+for home_directory in $(echo $home_directories | tr " " "\n")
 do
-    echo -n "$user: "
-    echo $home_directories_size | tr "," "\n" | grep "$user:" | cut -d: -f2
+    bashrc="$home_directory/.bashrc"
+    if grep -q "### USERS HOME DIRECTORIES SIZE ###" $bashrc
+    then
+        sed -i '/### USERS HOME DIRECTORIES SIZE ###/,/### END USERS HOME DIRECTORIES SIZE ###/d' $bashrc
+    fi
+    
+    echo "### USERS HOME DIRECTORIES SIZE ###" >> $bashrc
+    echo "echo $home_directories_size | tr \",\" \"\n\" | sort -n -r | sed 's/\/home\///g' | head -n 5" >> $bashrc
+    
+    # modifierez le fichier .bashrc de chaque utilisateur pour qu'il voit s'afficher la taille de
+    # son répertoire personnel ainsi qu'un avertissement s'il occupe plus de 100Mo.
+    # Les tailles devront s'afficher sous la forme "XGo,YMo,Zko et Toctets".
 
+    home_directory_size=$(du -sh $home_directory | cut -f1)
+    echo -e "$GREEN[OK]$NC The home directory of $home_directory is $home_directory_size"
+    echo "echo Your home directory size is $home_directory_size" >> $bashrc
+
+    if [ $(echo $home_directory_size | cut -d"M" -f1) -gt 100 ]
+    then
+        echo -e "$ORANGE[WARNING]$NC The home directory of $home_directory is bigger than 100Mo"
+        echo "echo -e \"$ORANGE[WARNING]$NC Your home directory size is bigger than 100Mo\"" >> $bashrc
+    fi
+
+    echo "### END USERS HOME DIRECTORIES SIZE ###" >> $bashrc
 done
+
+echo -e "$GREEN[OK]$NC The 5 biggest home directories will be displayed when you open a new terminal"
