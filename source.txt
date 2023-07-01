@@ -1,2 +1,2 @@
-Romain:Lancelot:ro,goo,fii:oui:romain
-Julien:Sage:jkkkk,goo,fii:non:romain
+Romain:Lancelot::oui:romain
+Julien:Sage::non:romain
