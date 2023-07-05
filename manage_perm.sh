@@ -6,12 +6,6 @@ ORANGE='\033[0;33m'
 NC='\033[0m'
 
 
-# Vous allez créer un script permettant de contrôler les exécutables pour lesquels le SUID
-# et/ou le SGID est activé. Il permettra de générer une liste de ces fichiers et de la comparer,
-# si elle existe, avec la liste créée lors du précédent appel du script.
-# Si les 2 listes sont différentes, un avertissement s'affiche avec la liste des différences. Vous
-# afficherez la date de modification des fichiers litigieux.
-
 function get_suid_list() {
     suid_list=$(find / -perm -u=s -type f 2>/dev/null)
 }
